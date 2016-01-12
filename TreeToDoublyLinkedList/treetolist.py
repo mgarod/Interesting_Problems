@@ -1,9 +1,9 @@
 """
-Author:			Michael Garod
-Title:			treetolist.py
+Author:		Michael Garod
+Title:		treetolist.py
 Date Created: 	1/12/16
 Description:	Given a binary search tree with a root, flatten() will
-				transform the entire tree into a doubly linked list with a head
+		transform the entire tree into a doubly linked list with a head
 """
 class Node:
 	def __init__(self, val=None):
