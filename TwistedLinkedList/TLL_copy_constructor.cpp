@@ -1,7 +1,7 @@
 /*
-*	Problem: A Twisted Linked List is a linked list where each node has an
+*	Problem: A Twisted Linked List is a Linked List where each node has an
 *		extra pointer which may point to any node succeeding it.
-*		Implement a copy constructor for a Linked List.
+*		Implement a copy constructor for a Twisted Linked List.
 *	Title: TLL_copy_constructor.cpp
 *	Author: Michael Garod
 *	Date Created: 1/20/16
