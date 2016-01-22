@@ -10,18 +10,17 @@
 */
 #include <iostream>
 #include <vector>			// Used for addJumps()
-#include <cstdint>			// Used for copy constructor and assignement
 #include <unordered_map>	// Used for copy constructor and assignement
 using namespace std;
 
 /*** Class/Structure Prototypes ***/
 template <class T>
 struct Node{
-		Node() : data{0}, next{nullptr}, jump{nullptr} { } ;
-		Node(T d) : data{d}, next{nullptr}, jump{nullptr} { } ;
-		T data;
-		Node<T>* next;
-		Node<T>* jump;
+	Node() : data{0}, next{nullptr}, jump{nullptr} { } ;
+	Node(T d) : data{d}, next{nullptr}, jump{nullptr} { } ;
+	T data;
+	Node<T>* next;
+	Node<T>* jump;
 };
 
 template <class T>
@@ -31,60 +30,72 @@ public:
 	~TLL() { clear(head); };
 	TLL(const TLL<T>& rhs);
 	TLL<T>& operator=(const TLL<T>& rhs);
+	TLL(TLL<T>&& rhs);
+	TLL<T>& operator=(TLL<T>&& rhs);
 	void insert(T d);
 	void print() const;
-	void addJumps();
-
+	
+	Node<T>* getHead() { return head; };
 private:
 	Node<T>* head;
 	size_t num_elements;
 
 	void clear(Node<T>*& node);
-	void cc_helper(unordered_map<size_t, Node<T>*>& map,
-		const Node<T>* rhs_node, size_t hashed_rhs_node);
 };
 
 /*** Class Definitions ***/
 
-// Copy Constructor: Defers to the Assignment Operator
+// Copy Constructor
 template <class T>
 TLL<T>::TLL(const TLL<T>& rhs):head{nullptr}, num_elements{rhs.num_elements} {
-	*this = rhs;
+	cout << "Calling Copy Constructor" << endl;
+	unordered_map<Node<T>*, Node<T>*> map;
+
+	for (auto rhs_cursor = rhs.head; rhs_cursor != nullptr;
+		 rhs_cursor = rhs_cursor->next){
+		map [ rhs_cursor ] = new Node<T>(rhs_cursor->data);
+	}
+
+	for (auto rhs_cursor = rhs.head; rhs_cursor != nullptr;
+		 rhs_cursor = rhs_cursor->next){
+		map[ rhs_cursor ]->next = map[ rhs_cursor->next ];
+
+		if (rhs_cursor->jump != nullptr)
+			map[ rhs_cursor ]->jump = map[ rhs_cursor->jump ];
+	}
+
+	head = map[ rhs.head ];
 }
 
 // Assignment Operator
 template <class T>
 TLL<T>& TLL<T>::operator=(const TLL<T>& rhs){
+	cout << "Calling Copy Assignment" << endl;
 	clear(head);
-
-	unordered_map<size_t, Node<T>*> map;
-	
-	cc_helper(map, rhs.head, reinterpret_cast<size_t>(rhs.head) );
-
-	head = map[ reinterpret_cast<size_t>(rhs.head) ];
+	TLL<T> temp = rhs;
+	*this = std::move(temp);
 
 	return *this;
 }
 
-// cc_helper: internal method required for the copy constructor and assignment
+// Move Constructor
 template <class T>
-void TLL<T>::cc_helper(unordered_map<size_t, Node<T>*>& map,
-	const Node<T>* rhs_node, size_t hashed_rhs_node) {
+TLL<T>::TLL(TLL<T>&& rhs){
+	cout << "Calling Move Constructor" << endl;
+	head = rhs.head;
+	rhs.head = nullptr;
+	num_elements = rhs.num_elements;
+}
 
-	if(rhs_node == nullptr)
-		return;
-
-	map[ hashed_rhs_node ] = new Node<T>(rhs_node->data);
-
-	cc_helper(map, rhs_node->next,
-		reinterpret_cast<size_t>(rhs_node->next) );
-
-	map[ hashed_rhs_node ]->next =
-		map[ reinterpret_cast<size_t>(rhs_node->next) ];
-		
-	if (rhs_node->jump != nullptr)
-		map[ hashed_rhs_node ]->jump =
-			map[ reinterpret_cast<size_t>(rhs_node->jump) ];
+// Move Assignment
+template <class T>
+TLL<T>& TLL<T>::operator=(TLL<T>&& rhs){
+	cout << "Calling Move Assignment" << endl;
+	clear(head);
+	head = rhs.head;
+	rhs.head = nullptr;
+	num_elements = rhs.num_elements;
+	return *this;
 }
 
 // Insert: At the end of the list
@@ -98,7 +109,7 @@ void TLL<T>::insert(T d){
 		for( ; cursor->next != nullptr; cursor = cursor->next) { }
 		cursor->next = new Node<T>(d);
 	}
-	
+
 	++num_elements;
 }
 
@@ -106,7 +117,7 @@ void TLL<T>::insert(T d){
 template <class T>
 void TLL<T>::print() const {
 	cout << "Printing: " << endl;
-	
+
 	for(auto cursor = head; cursor != nullptr; cursor = cursor->next){
 		cout << cursor->data << " ";
 	}
@@ -121,13 +132,13 @@ void TLL<T>::print() const {
 	cout << endl;
 }
 
-// A trivial function to add jumps
+// A trivial testing function to add jumps
 template <class T>
-void TLL<T>::addJumps(){
-	
+void addJumps(TLL<T> tll){
+
 	vector<Node<T>*> vec;
 
-	for(auto cursor = head; cursor != nullptr; cursor = cursor->next){
+	for(auto cursor = tll.getHead(); cursor != nullptr; cursor = cursor->next){
 		vec.push_back(cursor);
 	}
 
@@ -137,35 +148,46 @@ void TLL<T>::addJumps(){
 	vec[3]->jump = vec[5];
 }
 
+// Private destructor method; Tail-recursive.
 template <class T>
 void TLL<T>::clear(Node<T>*& node) {
 	if(node == nullptr)
 		return;
 
-	clear(node->next);
-
+	auto next = node->next;
 	delete node;
 	node = nullptr;
+
+	clear(next);
 }
 
 /*** Main ***/
 int main(){
-	TLL<int> myTLL;
-	myTLL.insert(4);
-	myTLL.insert(5);
-	myTLL.insert(6);
-	myTLL.insert(7);
-	myTLL.insert(8);
-	myTLL.insert(9);
-	myTLL.addJumps();
 
-	cout << "myTLL" << endl;
-	myTLL.print();
+	TLL<int> aTLL;
+	TLL<int> bTLL;
+	bTLL.insert(4);
+	bTLL.insert(5);
+	bTLL.insert(6);
+	bTLL.insert(7);
+	bTLL.insert(8);
+	bTLL.insert(9);
+	
+	addJumps(bTLL);
 
-	TLL<int> otherTLL = myTLL;
+	cout << "printing bTLL" << endl;
+	bTLL.print();
 
-	cout << "otherTLL:" << endl;
-	otherTLL.print();
+	cout << "printing aTLL" << endl;
+	aTLL = bTLL;
+	aTLL.print();
+
+	cout << "printing cTLL" << endl;
+	TLL<int> cTLL = std::move(bTLL);
+	cTLL.print();
+
+	cout << "printing bTLL" << endl;
+	bTLL.print();
 
 	return 0;
 }
