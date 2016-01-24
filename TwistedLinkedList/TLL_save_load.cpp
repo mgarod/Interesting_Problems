@@ -160,7 +160,6 @@ void TLL<T>::destructor_helper(Node<T>*& node) {
 template <class T>
 void TLL<T>::save(string filename){
 	ofstream ofs(filename);
-	vector<Node<T>*> vec;
 
 	for (auto cursor = head; cursor != nullptr; cursor = cursor->next){
 		ofs << cursor << " " << cursor->data << " "
@@ -177,13 +176,13 @@ void TLL<T>::load(string filename){
 	unordered_map<string, Node<T>*> file_to_new_map;
 	unordered_map<string, pair<string,string>> next_jump_map;
 
-	// Steal the name of the head, then replace the buffer to the start
+	// Take the name of the head, then reset the buffer to the start
 	string new_head;
 	ifs >> new_head;
 	ifs.seekg(0);
 	size_t counter = 0;
 
-	// Build the forest of nodes
+	// Use the maps to build the forest of nodes
 	string ifs_line;
 	while (getline(ifs, ifs_line)){
 		stringstream ss(ifs_line);
@@ -199,10 +198,10 @@ void TLL<T>::load(string filename){
 		next_jump_map[ file_node ] = { file_next, file_jump };
 	}
 
-	// Connect the forest 
+	// Use the maps to connect the forest 
 	for (auto it = file_to_new_map.begin(); it != file_to_new_map.end(); ++it){
-		string file_node = it->first;
-		Node<T>* node = it->second;
+		string file_node = it->first;	// key
+		Node<T>* node = it->second;		// value
 
 		// p is a pair that contains the name of next and jump
 		auto p = next_jump_map[ file_node ];
