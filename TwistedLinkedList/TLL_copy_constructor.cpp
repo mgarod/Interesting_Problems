@@ -6,7 +6,7 @@
 *	Author: Michael Garod
 *	Date Created: 1/20/16
 *	Description: A driver program to show that the implementation functions
-*	Build With: 'g++ -std=c++11 TLL_copyconstructor.cpp -o TLL_CC'
+*	Build With: 'g++ -std=c++11 TLL_copy_constructor.cpp -o TLL_CC'
 */
 #include <iostream>
 #include <vector>			// Used for addJumps()
