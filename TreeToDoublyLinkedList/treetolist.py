@@ -1,4 +1,7 @@
 """
+Problem:	Given a binary search tree, convert it to a sorted doubly linked list.
+		The solution should not use extra space (i.e. the conversion is in-place)
+Source: 	http://cslibrary.stanford.edu/109/TreeListRecursion.html
 Author:		Michael Garod
 Title:		treetolist.py
 Date Created: 	1/12/16
