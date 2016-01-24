@@ -1,7 +1,8 @@
 /*
 *	Problem: A Twisted Linked List is a Linked List where each node has an
-*		extra pointer which may point to any node succeeding it. Implement
-*		methods to save and load a Twisted Linked List to and from a file.
+*		extra pointer which may point to any node succeeding it.
+*		1) Implement a copy constructor for a Twisted Linked List
+*		2) Implement methods to save and load a TLL to and from a file.
 *	Title: TLL_save_load.cpp
 *	Author: Michael Garod
 *	Date Created: 1/24/16
@@ -13,8 +14,8 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <utility>
-#include <vector>			// Used for addJumps()
+#include <utility>		// Used for pair
+#include <vector>		// Used for addJumps()
 #include <unordered_map>	// Used for copy constructor and assignement
 using namespace std;
 
