@@ -41,6 +41,7 @@ public:
 	void load(string filename);
 	void insert(T d);
 	void print() const;
+	void swap(TLL& other);
 	
 	void clear() { destructor_helper(head); };
 	Node<T>* getHead() { return head; };
@@ -48,7 +49,6 @@ private:
 	Node<T>* head;
 	size_t num_elements;
 
-	void swap(TLL<T>& other);
 	void destructor_helper(Node<T>*& node);
 };
 
@@ -76,29 +76,20 @@ TLL<T>::TLL(const TLL<T>& rhs):head{nullptr}, num_elements{rhs.num_elements} {
 	head = map[ rhs.head ];
 }
 
-// Assignment Operator
+// Assignment Operator (does copy and move)
 template <class T>
-TLL<T>& TLL<T>::operator=(TLL<T> rhs){
-	cout << "Calling Copy Assignment" << endl;
-	destructor_helper(head);
+TLL<T>& TLL<T>::operator=(TLL<T> rhs) {
+	cout << "Calling Copy/Move Assignment" << endl;
 	swap(rhs);
 	return *this;
 }
 
 // Move Constructor
 template <class T>
-TLL<T>::TLL(TLL<T>&& rhs){
+TLL<T>::TLL(TLL<T>&& rhs): head{rhs.head}, num_elements{rhs.num_elements} {
 	cout << "Calling Move Constructor" << endl;
-	swap(rhs);
-}
-
-// Move Assignment
-template <class T>
-TLL<T>& TLL<T>::operator=(TLL<T>&& rhs){
-	cout << "Calling Move Assignment" << endl;
-	destructor_helper(head);
-	swap(rhs);
-	return *this;
+	// Diego: please no swaps here. rhs is a temporary object, so its role here is only to have its resources PILFERED :)
+	rhs.head = nullptr; // this makes rhs safe destructable, since it will die soon
 }
 
 // Insert: At the end of the list
@@ -135,12 +126,12 @@ void TLL<T>::print() const {
 	cout << endl;
 }
 
-// Private swap which is used for copy-and-swap idiom
+// Diego: no longer private, since it is pretty useful for the client code and does not break class invariants
 template <class T>
-void TLL<T>::swap(TLL<T>& other){
-	head = other.head;
-	other.head = nullptr;
-	num_elements = other.num_elements;
+void TLL<T>::swap(TLL<T>& other) {
+	using std::swap;
+	swap(head,other.head);
+	swap(num_elements,other.num_elements);
 }
 
 // Private destructor method; Tail-recursive.
