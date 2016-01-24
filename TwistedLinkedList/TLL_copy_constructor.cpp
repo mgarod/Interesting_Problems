@@ -28,10 +28,10 @@ class TLL{
 public:
 	TLL() : head{nullptr}, num_elements{0} { };
 	~TLL() { clear(head); };
-	TLL(const TLL<T>& rhs);
-	TLL<T>& operator=(const TLL<T>& rhs);
-	TLL(TLL<T>&& rhs);
-	TLL<T>& operator=(TLL<T>&& rhs);
+	TLL(const TLL& rhs);
+	TLL& operator=(TLL rhs);
+	TLL(TLL&& rhs);
+	TLL& operator=(TLL&& rhs);
 	void insert(T d);
 	void print() const;
 	
@@ -40,6 +40,7 @@ private:
 	Node<T>* head;
 	size_t num_elements;
 
+	void swap(TLL<T>& other);
 	void clear(Node<T>*& node);
 };
 
@@ -69,12 +70,10 @@ TLL<T>::TLL(const TLL<T>& rhs):head{nullptr}, num_elements{rhs.num_elements} {
 
 // Assignment Operator
 template <class T>
-TLL<T>& TLL<T>::operator=(const TLL<T>& rhs){
+TLL<T>& TLL<T>::operator=(TLL<T> rhs){
 	cout << "Calling Copy Assignment" << endl;
 	clear(head);
-	TLL<T> temp = rhs;
-	*this = std::move(temp);
-
+	swap(rhs);
 	return *this;
 }
 
@@ -82,9 +81,7 @@ TLL<T>& TLL<T>::operator=(const TLL<T>& rhs){
 template <class T>
 TLL<T>::TLL(TLL<T>&& rhs){
 	cout << "Calling Move Constructor" << endl;
-	head = rhs.head;
-	rhs.head = nullptr;
-	num_elements = rhs.num_elements;
+	swap(rhs);
 }
 
 // Move Assignment
@@ -92,9 +89,7 @@ template <class T>
 TLL<T>& TLL<T>::operator=(TLL<T>&& rhs){
 	cout << "Calling Move Assignment" << endl;
 	clear(head);
-	head = rhs.head;
-	rhs.head = nullptr;
-	num_elements = rhs.num_elements;
+	swap(rhs);
 	return *this;
 }
 
@@ -132,6 +127,27 @@ void TLL<T>::print() const {
 	cout << endl;
 }
 
+// Private swap which is used for copy-and-swap idiom
+template <class T>
+void TLL<T>::swap(TLL<T>& other){
+	head = other.head;
+	other.head = nullptr;
+	num_elements = other.num_elements;
+}
+
+// Private destructor method; Tail-recursive.
+template <class T>
+void TLL<T>::clear(Node<T>*& node) {
+	if(node == nullptr)
+		return;
+
+	auto next = node->next;
+	delete node;
+	node = nullptr;
+
+	clear(next);
+}
+
 // A trivial testing function to add jumps
 template <class T>
 void addJumps(TLL<T> tll){
@@ -146,19 +162,6 @@ void addJumps(TLL<T> tll){
 	//vec[1]->jump = vec[3];
 	vec[2]->jump = vec[4];
 	vec[3]->jump = vec[5];
-}
-
-// Private destructor method; Tail-recursive.
-template <class T>
-void TLL<T>::clear(Node<T>*& node) {
-	if(node == nullptr)
-		return;
-
-	auto next = node->next;
-	delete node;
-	node = nullptr;
-
-	clear(next);
 }
 
 /*** Main ***/
