@@ -1,3 +1,8 @@
+/*
+	Problem: Given an array of distinct integers, find all pairs of integers whos difference is K
+	Author: Michael Garod
+	Date: 8/30/16
+*/
 #include <iostream>
 #include <vector>
 #include <unordered_map>
