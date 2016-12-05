@@ -1,8 +1,10 @@
 /*
+https://codelab.interviewbit.com/problems/pascal1/
+
 Given numRows (A), generate the first numRows of Pascal’s triangle.
 */
 
-vector<vector<int> > Solution::generate(int A) {
+vector<vector<int>> Solution::generate(int A) {
     vector<vector<int>> answer;
     if (A >= 1)
         answer.push_back({1});

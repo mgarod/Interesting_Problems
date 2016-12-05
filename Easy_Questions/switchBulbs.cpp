@@ -1,4 +1,6 @@
 /*
+https://codelab.interviewbit.com/problems/bulbs/
+
 N light bulbs are connected by a wire. Each bulb has a switch associated with it,
 however due to faulty wiring, a switch also changes the state of all the bulbs
 to the right of current bulb.
